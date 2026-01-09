@@ -22,6 +22,9 @@ class Case:
         self.t_weight = tensors["weight"]
         self.t_bias = tensors["bias"]
 
+    def get_tensor_list(self) -> list:
+        return [self.t_input, self.t_weight, self.t_bias]
+
 
 class Result:
     def __init__(self):

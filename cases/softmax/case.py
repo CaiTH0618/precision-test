@@ -14,6 +14,9 @@ class Case:
         tensors = torch.load(path)
         self.t_input = tensors["input"]
 
+    def get_tensor_list(self) -> list:
+        return [self.t_input]
+
 
 class Result:
     def __init__(self):

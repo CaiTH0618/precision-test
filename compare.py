@@ -16,6 +16,14 @@ def compare(op: str, dtype: str, device: str):
     result_list = load_all_results_by_name(Result, op, dtype, device)
     baseline_result_list = load_all_results_by_name(Result, op, dtype, "baseline")
 
+    n_zero_overall = 0
+    n_inf_overall = 0
+    n_nan_overall = 0
+    max_abs_error_overall = 0.0
+    max_rel_error_overall = 0.0
+    avg_abs_error_overall = 0.0
+    avg_rel_error_overall = 0.0
+
     for i, (result, baseline_result) in enumerate(zip(result_list, baseline_result_list)):
         tensor_list = result.get_tensor_list()
         baseline_tensor_list = baseline_result.get_tensor_list()
@@ -38,6 +46,14 @@ def compare(op: str, dtype: str, device: str):
         avg_abs_error /= len(tensor_list)
         avg_rel_error /= len(tensor_list)
 
+        n_zero_overall += n_zero
+        n_inf_overall += n_inf
+        n_nan_overall += n_nan
+        max_abs_error_overall = max(max_abs_error_overall, max_abs_error)
+        max_rel_error_overall = max(max_rel_error_overall, max_rel_error)
+        avg_abs_error_overall += avg_abs_error
+        avg_rel_error_overall += avg_rel_error
+
         star1 = "****" if (n_inf > 0 or n_nan > 0) else ""
         star2 = "****" if (max_rel_error > 1e-2) else ""
 
@@ -47,6 +63,16 @@ def compare(op: str, dtype: str, device: str):
         print(f"  Avg Rel Error: {avg_rel_error}")
         print(f"  Max Abs Error: {max_abs_error}")
         print(f"  Avg Abs Error: {avg_abs_error}")
+
+    avg_abs_error_overall /= len(result_list)
+    avg_rel_error_overall /= len(result_list)
+    
+    print(f"Overall:")
+    print(f"  Inf={n_inf_overall}, NaN={n_nan_overall}, Zero={n_zero_overall}")
+    print(f"  Max Rel Error: {max_rel_error_overall}")
+    print(f"  Avg Rel Error: {avg_rel_error_overall}")
+    print(f"  Max Abs Error: {max_abs_error_overall}")
+    print(f"  Avg Abs Error: {avg_abs_error_overall}")
 
 
 if __name__ == "__main__":

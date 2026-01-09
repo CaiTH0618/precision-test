@@ -19,6 +19,9 @@ class Case:
         self.t_logits = tensors["logits"]
         self.t_targets = tensors["targets"]
 
+    def get_tensor_list(self) -> list:
+        return [self.t_logits, self.t_targets]
+
 
 class Result:
     def __init__(self):
